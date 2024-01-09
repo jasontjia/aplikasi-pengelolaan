@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 05, 2023 at 03:54 PM
+-- Generation Time: Jan 09, 2024 at 05:47 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -32,10 +32,10 @@ CREATE TABLE `barang-keluar` (
   `idbarang` int(11) NOT NULL,
   `tanggal` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `penerima` varchar(25) NOT NULL,
-  `harga_jual` varchar(100) NOT NULL,
   `satuan` varchar(50) NOT NULL,
-  `qty` int(11) NOT NULL,
-  `total` varchar(100) NOT NULL,
+  `qty_keluar` int(11) NOT NULL,
+  `foto_barang` varchar(900) NOT NULL,
+  `no_do` varchar(75) NOT NULL,
   `status` enum('Menunggu','Disetujui','Ditolak') NOT NULL DEFAULT 'Menunggu'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -43,20 +43,11 @@ CREATE TABLE `barang-keluar` (
 -- Dumping data for table `barang-keluar`
 --
 
-INSERT INTO `barang-keluar` (`idkeluar`, `idbarang`, `tanggal`, `penerima`, `harga_jual`, `satuan`, `qty`, `total`, `status`) VALUES
-(37, 48, '2023-10-29 15:32:23', 'rivo', '250.000', 'Unit', 25, '', 'Menunggu'),
-(38, 48, '2023-10-29 16:01:17', 'rivo', '250.000', 'Unit', 5, '', 'Menunggu'),
-(44, 54, '2023-10-31 14:22:50', 'jason', '180000', '', 2, '360000', 'Menunggu'),
-(45, 52, '2023-10-31 14:27:03', 'steve', '125000', 'Unit', 5, '625000', 'Menunggu'),
-(46, 52, '2023-10-31 14:36:38', 'alo', '125000', 'Unit', 3, '375000', 'Menunggu'),
-(47, 55, '2023-11-01 11:07:17', 'Jason', '350000', 'DOS', 10, '3500000', 'Ditolak'),
-(48, 55, '2023-11-01 11:07:22', 'Siu', '350000', 'Buah', 5, '1750000', 'Ditolak'),
-(49, 56, '2023-11-01 11:07:26', 'jason', '448000', 'Pack', 5, '2240000', 'Ditolak'),
-(50, 56, '2023-11-01 11:07:29', 'alo', '350000', 'Buah', 2, '700000', 'Ditolak'),
-(51, 73, '2023-11-01 11:07:20', 'Jason', '250000', 'Buah', 10, '2500000', 'Ditolak'),
-(52, 57, '2023-11-12 13:14:39', 'jason', '1000000', 'DOS', 10, '10000000', 'Ditolak'),
-(58, 55, '2023-11-24 13:06:34', 'steve', '350000', 'Buah', 5, '1750000', 'Disetujui'),
-(59, 57, '2023-12-05 14:28:40', 'alo', '1000000', '', 11, '11000000', 'Ditolak');
+INSERT INTO `barang-keluar` (`idkeluar`, `idbarang`, `tanggal`, `penerima`, `satuan`, `qty_keluar`, `foto_barang`, `no_do`, `status`) VALUES
+(180, 122, '2023-12-24 04:45:05', 'Jason', 'Buah', 20, 'WhatsApp Image 2020-09-08 at 12.09.41.jpeg', '001', 'Menunggu'),
+(181, 122, '2023-12-24 05:25:40', 'Thomas', 'Buah', 150, '6cad856a-7d75-462c-98a7-123f7a8f4341.png', '002', 'Menunggu'),
+(182, 122, '2023-12-26 12:46:18', 'thomas', 'Buah', 5, 'Manager.png', '003', 'Menunggu'),
+(183, 122, '2024-01-09 05:17:08', 'Jason', 'Buah', 25, '8d98wrhcwlp51.png', '004', 'Menunggu');
 
 -- --------------------------------------------------------
 
@@ -68,11 +59,9 @@ CREATE TABLE `barang-masuk` (
   `idmasuk` int(11) NOT NULL,
   `idbarang` int(11) NOT NULL,
   `tanggal` timestamp NOT NULL DEFAULT current_timestamp(),
-  `harga_beli` varchar(100) NOT NULL,
   `satuan` varchar(50) NOT NULL,
   `nama_supplier` varchar(200) NOT NULL,
-  `qty` int(11) NOT NULL,
-  `total` varchar(50) NOT NULL,
+  `qty_masuk` int(11) NOT NULL,
   `status` enum('Menunggu','Disetujui','Ditolak') NOT NULL DEFAULT 'Menunggu'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -80,18 +69,9 @@ CREATE TABLE `barang-masuk` (
 -- Dumping data for table `barang-masuk`
 --
 
-INSERT INTO `barang-masuk` (`idmasuk`, `idbarang`, `tanggal`, `harga_beli`, `satuan`, `nama_supplier`, `qty`, `total`, `status`) VALUES
-(125, 52, '2023-10-31 16:13:53', '120000', 'Pack', 'pt jumbo prima', 35, '4200000', 'Menunggu'),
-(126, 54, '2023-10-31 16:14:20', '120000', 'Pack', 'pt honda tbk', 25, '3000000', 'Menunggu'),
-(127, 55, '2023-11-01 10:10:38', '310000', '', 'Aneka Helm', 35, '10850000', 'Ditolak'),
-(128, 56, '2023-11-01 10:18:26', '224000', 'Buah', 'PT Manado Mitra Mandiri', 8, '1792000', 'Ditolak'),
-(129, 55, '2023-11-01 10:24:09', '310000', 'DOS', 'Aneka Helm', 15, '4650000', 'Ditolak'),
-(130, 73, '2023-11-01 10:58:01', '175000', 'Buah', 'PT Bersama Jaya Perkasa', 30, '5250000', 'Disetujui'),
-(131, 57, '2023-11-08 12:37:08', '975000', '', 'PT Bersama Jaya Perkasa', 21, '19500000', 'Ditolak'),
-(133, 73, '2023-11-13 15:06:06', '175000', 'Buah', 'PT Bersama Jaya Perkasa', 10, '1750000', 'Disetujui'),
-(134, 55, '2023-11-21 15:25:22', '310000', 'Buah', 'PT Bersama Jaya Perkasa', 15, '4650000', 'Ditolak'),
-(135, 57, '2023-11-21 15:26:02', '975000', '', 'PT Bersama Jaya Perkasa', 10, '9750000', 'Disetujui'),
-(153, 55, '2023-12-05 14:37:58', '310000', '', 'PT Bersama Jaya Perkasa', 10, '3100000', 'Disetujui');
+INSERT INTO `barang-masuk` (`idmasuk`, `idbarang`, `tanggal`, `satuan`, `nama_supplier`, `qty_masuk`, `status`) VALUES
+(252, 122, '2023-12-24 04:44:24', 'Buah', 'Aneka Helm', 200, 'Menunggu'),
+(253, 122, '2024-01-09 05:18:24', 'Buah', 'PT Bersama Jaya Perkasa', 50, 'Menunggu');
 
 -- --------------------------------------------------------
 
@@ -166,9 +146,9 @@ CREATE TABLE `stok` (
   `idbarang` int(11) NOT NULL,
   `namabarang` varchar(25) NOT NULL,
   `jenisbarang` varchar(25) NOT NULL,
-  `harga_beli` varchar(100) NOT NULL,
-  `harga_jual` varchar(100) NOT NULL,
   `satuan` varchar(100) NOT NULL,
+  `keterangan` varchar(500) NOT NULL,
+  `Tanggal_Expired` varchar(100) NOT NULL,
   `stock` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -176,14 +156,14 @@ CREATE TABLE `stok` (
 -- Dumping data for table `stok`
 --
 
-INSERT INTO `stok` (`idbarang`, `namabarang`, `jenisbarang`, `harga_beli`, `harga_jual`, `satuan`, `stock`) VALUES
-(55, 'Helm NHK R6 Solid Black', 'Helm Motor', '310000', '350000', 'Buah', 58),
-(56, 'Aki Yuaza MF YTZ4V', 'Aki Motor', '224000', '448000', 'Pack', 1),
-(57, 'Power 4T 10W40', 'Oli Motor', '975000', '1000000', 'Pack', 10),
-(58, 'Ban Luar TL Sport XR Evo', 'Ban Motor', '3285000', '3400000', 'PCS', 0),
-(73, 'Ban Luar FDR', 'Ban Motor', '175000', '250000', 'PCS', 30),
-(81, 'Helm NHK R6 Solid White', 'Helm Motor', '400000', '475000', 'Buah', 0),
-(84, 'Oli idemitsu', 'Oli Motor', '100000', '155000', 'Pack', 0);
+INSERT INTO `stok` (`idbarang`, `namabarang`, `jenisbarang`, `satuan`, `keterangan`, `Tanggal_Expired`, `stock`) VALUES
+(122, 'Helm NHK R6 Solid Black', 'Helm Motor', 'Buah', '', '', 50),
+(123, 'Oli idemitsu', 'Helm Motor', 'DOS', 'motor honda', '31 Desember 2023', 0),
+(124, 'Helm NHK R6 Solid White', 'Helm Motor', 'Buah', '', '', 0),
+(125, 'Ban Luar FDR', 'Ban Motor', 'PCS', 'ban yamaha', '', 0),
+(126, 'Ban Luar TL Sport XR Evo', 'Ban Motor', 'PCS', 'ban suzuki', '', 0),
+(127, 'Aki Yuaza MF YTZ4V', 'Aki Motor', 'Pack', '', '', 0),
+(128, 'Power 4T 10W40', 'Aki Motor', 'DOS', '', '', 0);
 
 -- --------------------------------------------------------
 
@@ -263,19 +243,19 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT for table `barang-keluar`
 --
 ALTER TABLE `barang-keluar`
-  MODIFY `idkeluar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `idkeluar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
 
 --
 -- AUTO_INCREMENT for table `barang-masuk`
 --
 ALTER TABLE `barang-masuk`
-  MODIFY `idmasuk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+  MODIFY `idmasuk` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=254;
 
 --
 -- AUTO_INCREMENT for table `jenis-barang`
 --
 ALTER TABLE `jenis-barang`
-  MODIFY `id_jenis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=225;
+  MODIFY `id_jenis` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=227;
 
 --
 -- AUTO_INCREMENT for table `pengguna`
@@ -287,19 +267,19 @@ ALTER TABLE `pengguna`
 -- AUTO_INCREMENT for table `satuan`
 --
 ALTER TABLE `satuan`
-  MODIFY `id_satuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_satuan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `stok`
 --
 ALTER TABLE `stok`
-  MODIFY `idbarang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `idbarang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT for table `supplier`
 --
 ALTER TABLE `supplier`
-  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
