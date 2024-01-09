@@ -7,12 +7,12 @@ $conn = mysqli_connect("localhost", "root", "", "stokbarang");
 if (isset($_POST['addnewbarang'])) {
     $namabarang = $_POST['namabarang'];
     $jenisbarang = $_POST['jenisbarang'];
-    $harga_beli = $_POST['harga_beli'];
-    $harga_jual = $_POST['harga_jual'];
     $satuan = $_POST['satuan'];
+    $keterangan = $_POST['keterangan'];
+    $Tanggal_Expired = $_POST['Tanggal_Expired'];
     $stock = $_POST['stock'];
 
-    $addtotable = mysqli_query($conn, "insert into stok(namabarang, jenisbarang, harga_beli, harga_jual, satuan, stock) values('$namabarang','$jenisbarang', '$harga_beli', '$harga_jual', '$satuan', '$stock')");
+    $addtotable = mysqli_query($conn, "insert into stok(namabarang, jenisbarang, satuan, keterangan, Tanggal_Expired, stock) values('$namabarang','$jenisbarang', '$satuan','$keterangan','$Tanggal_Expired', '$stock')");
     if ($addtotable) {
         echo '<script>alert("Berhasil Simpan Data Barang");window.location="databarang.php"</script>';
     } else {
@@ -21,16 +21,18 @@ if (isset($_POST['addnewbarang'])) {
     }
 }
 
+
+
 //Fungsi untuk mengubah data barang
 if (isset($_POST['ubahbarang'])) {
     $namabarang = $_POST['namabarang'];
     $jenisbarang = $_POST['jenisbarang'];
-    $harga_beli = $_POST['harga_beli'];
-    $harga_jual = $_POST['harga_jual'];
     $satuan = $_POST['satuan'];
+    $keterangan = $_POST['keterangan'];
+    $Tanggal_Expired = $_POST['Tanggal_Expired'];
     $idb = $_POST['idbarang'];
 
-    $ubahbarang = mysqli_query($conn, "UPDATE stok SET namabarang='$namabarang', jenisbarang='$jenisbarang', harga_beli='$harga_beli', harga_jual='$harga_jual', satuan='$satuan'  WHERE idbarang = $idb");
+    $ubahbarang = mysqli_query($conn, "UPDATE stok SET namabarang='$namabarang', jenisbarang='$jenisbarang', satuan='$satuan', keterangan='$keterangan', Tanggal_Expired='$Tanggal_Expired' WHERE idbarang = $idb");
     if ($ubahbarang) {
         echo '<script>alert("Berhasil Ubah Data Barang");window.location="databarang.php"</script>';
     } else {
@@ -55,19 +57,17 @@ if (isset($_POST['hapusbarang'])) {
 //Fungsi untuk menambahkan barang masuk
 if (isset($_POST['barangmasuk'])) {
     $barangnya = $_POST['barangnya'];
-    $harga_beli = $_POST['harga_beli'];
     $nama_supplier = $_POST['nama_supplier'];
     $satuan = $_POST['satuan'];
-    $qty = $_POST['qty'];
-    $total = $_POST['total'];
+    $qty_masuk = $_POST['qty_masuk'];
 
     $cekstokbarang = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$barangnya'");
     $ambildatanya = mysqli_fetch_array($cekstokbarang);
 
     $stoksekarang = $ambildatanya['stock'];
-    $tambahkanstoksekarangdenganquantity = $stoksekarang + $qty;
+    $tambahkanstoksekarangdenganquantity = $stoksekarang + $qty_masuk;
 
-    $addtomasuk = mysqli_query($conn, "INSERT INTO `barang-masuk` (idbarang, harga_beli, nama_supplier, qty, total) VALUES ('$barangnya', '$harga_beli', '$nama_supplier', '$qty', '$total')");
+    $addtomasuk = mysqli_query($conn, "INSERT INTO `barang-masuk` (idbarang, nama_supplier, satuan, qty_masuk) VALUES ('$barangnya', '$nama_supplier', '$satuan', '$qty_masuk')");
     $updatestokmasuk = mysqli_query($conn, "UPDATE stok SET stock = '$tambahkanstoksekarangdenganquantity' WHERE idbarang = '$barangnya'");
 
     if ($addtomasuk && $updatestokmasuk) {
@@ -78,53 +78,17 @@ if (isset($_POST['barangmasuk'])) {
     }
 }
 
-// Fungsi mengubah barang masuk
-if (isset($_POST['ubahbarangmasuk'])) {
-    $idb = $_POST['idbarang'];
-    $idm = $_POST['idmasuk'];
-    $harga_beli = $_POST['harga_beli'];
-    $nama_supplier = $_POST['nama_supplier'];
-    $qty = $_POST['qty'];
-    $total = $_POST['total'];
-
-    // Ambil stok sekarang dari tabel stock
-    $lihatstok = mysqli_query($conn, "SELECT stock FROM stok WHERE idbarang='$idb'");
-    $stoknya = mysqli_fetch_array($lihatstok);
-    $stokskrg = $stoknya['stock'];
-
-    // Ambil qty sekarang dari tabel masuk
-    $qtyskrg = mysqli_query($conn, "SELECT qty FROM `barang-masuk` WHERE idmasuk = '$idm'");
-    $qtynya =  mysqli_fetch_array($qtyskrg);
-    $qtyskrg = $qtynya['qty'];
-
-    // Menghitung selisih antara qty baru dan qty saat ini
-    $selisih = $qty - $qtyskrg;
-
-    // Menghitung stok baru
-    $stokbaru = $stokskrg + $selisih;
-
-    $kurangistoknya = mysqli_query($conn, "UPDATE stok SET stock = '$stokbaru' WHERE idbarang='$idb'");
-    $ubahnya = mysqli_query($conn, "UPDATE `barang-masuk` SET qty='$qty', harga_beli='$harga_beli', nama_supplier='$nama_supplier', total='$total' WHERE idmasuk = $idm");
-
-    if ($kurangistoknya && $ubahnya) {
-        echo '<script>alert("Berhasil Ubah Barang Masuk");window.location="barangmasuk.php"</script>';
-    } else {
-        echo 'Gagal';
-        header('location:barangmasuk.php');
-    }
-}
-
 //Fungsi untuk menghapus barang masuk
 if (isset($_POST['hapusbarangmasuk'])) {
     $idb = $_POST['idbarang'];
-    $qty = $_POST['qty'];
+    $qty_masuk = $_POST['qty_masuk'];
     $idm = $_POST['idmasuk'];
 
     $getdatastok = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$idb'");
     $data = mysqli_fetch_array($getdatastok);
     $stok = $data['stock'];
 
-    $selisih = $stok - $qty;
+    $selisih = $stok - $qty_masuk;
     $update = mysqli_query($conn, "UPDATE stok SET stock = '$selisih' WHERE idbarang = '$idb'");
     $hapusdata = mysqli_query($conn, "DELETE FROM `barang-masuk` WHERE idmasuk = '$idm'");
 
@@ -136,107 +100,84 @@ if (isset($_POST['hapusbarangmasuk'])) {
     }
 }
 
-//Fungsi untuk menambahkan barang keluar
+
+// Fungsi untuk menambahkan barang keluar
 if (isset($_POST['addbarangkeluar'])) {
     $barangnya = $_POST['barangnya'];
-    $harga_jual = $_POST['harga_jual'];
     $penerima = $_POST['penerima'];
-    $qty = $_POST['qty'];
-    $total = $_POST['total'];
+    $satuan = $_POST['satuan'];
+    $qty_keluar = $_POST['qty_keluar'];
+    $no_do = $_POST['no_do'];
 
+    // Cek apakah nomor DO sudah ada
+    $cekNoDO = mysqli_query($conn, "SELECT * FROM `barang-keluar` WHERE no_do = '$no_do'");
+    if (mysqli_num_rows($cekNoDO) > 0) {
+        echo '<script>alert("Nomor DO sudah ada. Mohon gunakan nomor DO yang berbeda."); window.location.href="barangkeluar.php";</script>';
+        exit; // Penting untuk keluar dari skrip setelah redirect
+    }
+    
+    // Cek stok barang
     $cekstokbarang = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$barangnya'");
     $ambildatanya = mysqli_fetch_array($cekstokbarang);
-
     $stoksekarang = $ambildatanya['stock'];
 
-    if ($stoksekarang >= $qty) {
-        //apabila barang cukup
-        $tambahkanstoksekarangdenganquantity = $stoksekarang - $qty;
+    if ($stoksekarang >= $qty_keluar) {
+        // Apabila barang cukup
+        $tambahkanstoksekarangdenganquantity = $stoksekarang - $qty_keluar;
 
-        $addtokeluar = mysqli_query($conn, "INSERT INTO `barang-keluar` (idbarang, harga_jual, penerima, qty, total) VALUES ('$barangnya', '$harga_jual', '$penerima', '$qty', '$total')");
-        $updatestokmasuk = mysqli_query($conn, "UPDATE stok SET stock = '$tambahkanstoksekarangdenganquantity' WHERE idbarang = '$barangnya'");
+        // Mengunggah gambar
+        $targetDir = "C:/xampp/htdocs/KP-Projek/"; // Sesuaikan dengan direktori tempat Anda ingin menyimpan gambar
+        $namaFile = basename($_FILES['foto_barang']['name']);
+        $targetPath = $targetDir . basename($_FILES['foto_barang']['name']);
+        $foto_barang = $targetPath;
 
-        if ($addtokeluar && $updatestokmasuk) {
-            echo '<script>alert("Berhasil Simpan Barang Keluar");window.location="barangkeluar.php"</script>';
-        } else {
-            echo 'Gagal';
-            header('location:barangkeluar.php');
-        }
-    } else {
-        //apabila barang tidak cukup
-        echo '
-        <script>
-            alert("Jumlah berang keluar saat ini sudah melebihi jumlah stok tersisa");
-            window.location.href= keluar.php;
-        </script>
-        ';
-    }
-}
+        // Pastikan file yang diunggah ada
+        if ($_FILES['foto_barang']['error'] == UPLOAD_ERR_OK) {
+            // Pastikan ekstensi file yang diunggah adalah gambar
+            $allowedExtensions = array('jpg', 'jpeg', 'png', 'gif');
+            $fileExtension = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
 
-//Fungsi untuk mengubah barang keluar
-if (isset($_POST['ubahbarangkeluar'])) {
-    $idb = $_POST['idbarang'];
-    $idk = $_POST['idkeluar'];
-    $harga_jual = $_POST['harga_jual'];
-    $penerima = $_POST['penerima'];
-    $qty = $_POST['qty'];
-    $total = $_POST['total'];
+            if (in_array($fileExtension, $allowedExtensions)) {
+                if (move_uploaded_file($_FILES['foto_barang']['tmp_name'], $targetPath)) {
+                    // Simpan path gambar ke database
+                    $addtokeluar = mysqli_query($conn, "INSERT INTO `barang-keluar` (idbarang, penerima, satuan, qty_keluar, no_do, foto_barang) VALUES ('$barangnya', '$penerima', '$satuan', '$qty_keluar', '$no_do', '$namaFile')");
 
-    // Ambil stok sekarang dari tabel stock
-    $lihatstok = mysqli_query($conn, "SELECT stock FROM `stok` WHERE idbarang='$idb'");
-    $stoknya = mysqli_fetch_array($lihatstok);
-    $stokskrg = $stoknya['stock'];
+                    // Update stok masuk
+                    $updatestokmasuk = mysqli_query($conn, "UPDATE stok SET stock = '$tambahkanstoksekarangdenganquantity' WHERE idbarang = '$barangnya'");
 
-    // Ambil qty sekarang dari tabel masuk
-    $qtyskrg = mysqli_query($conn, "SELECT qty FROM `barang-keluar` WHERE idkeluar = '$idk'");
-    $qtynya =  mysqli_fetch_array($qtyskrg);
-    $qtyskrg = $qtynya['qty'];
-
-    if ($qty > $qtyskrg) {
-        $selisih = $qty - $qtyskrg;
-        $kurang = $stokskrg - $selisih;
-
-        if ($selisih <= $stokskrg) {
-            $kurangistoknya = mysqli_query($conn, "UPDATE stok SET stock = '$kurang' WHERE idbarang='$idb'");
-            $ubahnya = mysqli_query($conn, "UPDATE `barang-keluar` SET qty='$qty', harga_jual='$harga_jual', penerima='$penerima', total='$total' WHERE idkeluar = $idk");
-            if ($kurangistoknya && $ubahnya) {
-                echo '<script>alert("Berhasil Ubah Barang Keluar");window.location="barangkeluar.php"</script>';
+                    if ($addtokeluar && $updatestokmasuk) {
+                        echo '<script>alert("Berhasil Simpan Barang Keluar"); window.location="do.php";</script>';
+                        exit; // Penting untuk keluar dari skrip setelah redirect
+                    } else {
+                        echo 'Gagal menyimpan data ke database: ' . mysqli_error($conn);
+                    }
+                } else {
+                    echo 'Gagal mengunggah gambar.';
+                }
             } else {
-                echo 'Gagal';
-                header('location:barangkeluar.php');
+                echo 'Hanya file gambar yang diizinkan (jpg, jpeg, png, gif).';
             }
         } else {
-            echo '
-            <script> alert ("Stok Tidak Cukup");
-            window.location.href="barangkeluar.php";
-            </script>
-            ';
+            echo 'Terjadi kesalahan dalam proses upload gambar.';
         }
     } else {
-        $selisih = $qtyskrg - $qty;
-        $kurang = $stokskrg + $selisih;
-        $kurangistoknya = mysqli_query($conn, "UPDATE stok SET stock = '$kurang' WHERE idbarang='$idb'");
-        $ubahnya = mysqli_query($conn, "UPDATE barang-keluar SET qty='$qty', harga_jual='$harga_jual', penerima='$penerima', total='$total' WHERE idkeluar = $idk");
-        if ($kurangistoknya && $ubahnya) {
-            echo '<script>alert("Berhasil Ubah Barang Keluar");window.location="barangkeluar.php"</script>';
-        } else {
-            echo 'Gagal';
-            header('location:barangkeluar.php');
-        }
+        // Apabila barang tidak cukup
+        echo '<script>alert("Jumlah barang keluar saat ini sudah melebihi jumlah stok tersisa"); window.location.href="barangkeluar.php";</script>';
     }
 }
+
 
 //Fungsi menghapus barang keluar
 if (isset($_POST['hapusbarangkeluar'])) {
     $idb = $_POST['idbarang'];
-    $qty = $_POST['qty'];
+    $qty_keluar = $_POST['qty_keluar'];
     $idk = $_POST['idkeluar'];
 
     $getdatastok = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$idb'");
     $data = mysqli_fetch_array($getdatastok);
     $stok = $data['stock'];
 
-    $selisih = $stok + $qty;
+    $selisih = $stok + $qty_keluar;
     $update = mysqli_query($conn, "UPDATE stok SET stock = '$selisih' WHERE idbarang = '$idb'");
     $hapusdata = mysqli_query($conn, "DELETE FROM `barang-keluar` WHERE idkeluar = '$idk'");
 
@@ -403,10 +344,13 @@ if (isset($_POST['approvebarangmasuk'])) {
 
 //Melakukan Validasi Penolakan Barang Masuk Oleh Pimpinan
 if (isset($_POST['tolakbarangmasuk'])) {
-    // Memastikan $idm adalah integer
+    $idb = $_POST['idbarang'];
+    $qty_masuk = $_POST['qty_masuk'];
+    $idm = $_POST['idmasuk'];
+    // Memastikan $idk adalah integer
     $idm = (int)$_POST['idmasuk'];
 
-    // Lakukan query untuk mengubah status barang masuk menjadi "Rejected" dalam database
+    // Lakukan query untuk mengubah status barang keluar menjadi "Ditolak" dalam database
     $query = "UPDATE `barang-masuk` SET status = 'Ditolak' WHERE idmasuk = ?";
 
     // Membuat prepared statement
@@ -416,13 +360,26 @@ if (isset($_POST['tolakbarangmasuk'])) {
         mysqli_stmt_bind_param($stmt, "i", $idm);
 
         if (mysqli_stmt_execute($stmt)) {
-            echo "<script>
-            alert('Barang masuk ditolak.');
-            window.location.href = 'barangmasuk_pimpinan.php';
-        </script>";
-            exit;
+            // Dapatkan informasi stok dari database
+            $getdatastok = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$idb'");
+            $data = mysqli_fetch_array($getdatastok);
+            $stok = $data['stock'];
+
+            // Update stok dengan menambahkan kembali barang yang ditolak
+            $selisih = $stok - $qty_masuk;
+            $update = mysqli_query($conn, "UPDATE stok SET stock = '$selisih' WHERE idbarang = '$idb'");
+
+            if ($update) {
+                echo "<script>
+                    alert('Barang masuk ditolak dan stok diperbarui.');
+                    window.location.href = 'barangmasuk_pimpinan.php';
+                </script>";
+                exit;
+            } else {
+                echo "Error updating stock: " . mysqli_error($conn);
+            }
         } else {
-            echo "Error: " . mysqli_error($conn);
+            echo "Error rejecting: " . mysqli_error($conn);
         }
 
         // Tutup prepared statement
@@ -435,14 +392,14 @@ if (isset($_POST['tolakbarangmasuk'])) {
 //Fungsi untuk menghapus barang masuk
 if (isset($_POST['hapusbarangmasukpimpinan'])) {
     $idb = $_POST['idbarang'];
-    $qty = $_POST['qty'];
+    $qty_masuk = $_POST['qty_masuk'];
     $idm = $_POST['idmasuk'];
 
     $getdatastok = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$idb'");
     $data = mysqli_fetch_array($getdatastok);
     $stok = $data['stock'];
 
-    $selisih = $stok - $qty;
+    $selisih = $stok - $qty_masuk;
     $update = mysqli_query($conn, "UPDATE stok SET stock = '$selisih' WHERE idbarang = '$idb'");
     $hapusdata = mysqli_query($conn, "DELETE FROM `barang-masuk` WHERE idmasuk = '$idm'");
 
@@ -450,9 +407,10 @@ if (isset($_POST['hapusbarangmasukpimpinan'])) {
         echo '<script>alert("Berhasil Hapus Barang Masuk");window.location="barangmasuk_pimpinan.php"</script>';
     } else {
         echo 'Gagal';
-        header('location:barangmasuk.php');
+        header('location:barangmasuk_pimpinan.php');
     }
 }
+
 
 // Melakukan Validasi Persetujuan Barang Keluar Oleh Pimpinan
 if (isset($_POST['approvebarangkeluar'])) {
@@ -483,8 +441,11 @@ if (isset($_POST['approvebarangkeluar'])) {
 
 // Melakukan Validasi Penolakan Barang Keluar Oleh Pimpinan
 if (isset($_POST['tolakbarangkeluar'])) {
+    $idb = $_POST['idbarang'];
+    $qty_keluar = $_POST['qty_keluar'];
+    $idk = $_POST['idkeluar'];
     // Memastikan $idk adalah integer
-    $idm = (int)$_POST['idkeluar'];
+    $idk = (int)$_POST['idkeluar'];
 
     // Lakukan query untuk mengubah status barang keluar menjadi "Ditolak" dalam database
     $query = "UPDATE `barang-keluar` SET status = 'Ditolak' WHERE idkeluar = ?";
@@ -493,17 +454,29 @@ if (isset($_POST['tolakbarangkeluar'])) {
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, "i", $idm);
+        mysqli_stmt_bind_param($stmt, "i", $idk);
 
         if (mysqli_stmt_execute($stmt)) {
-            echo "<script>
-            alert('Barang keluar ditolak.');
-            window.location.href = 'barangkeluar_pimpinan.php';
-        </script>";
-            exit;
-            header('Location: barangkeluar_pimpinan.php');
+            // Dapatkan informasi stok dari database
+            $getdatastok = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$idb'");
+            $data = mysqli_fetch_array($getdatastok);
+            $stok = $data['stock'];
+
+            // Update stok dengan menambahkan kembali barang yang ditolak
+            $selisih = $stok + $qty_keluar;
+            $update = mysqli_query($conn, "UPDATE stok SET stock = '$selisih' WHERE idbarang = '$idb'");
+
+            if ($update) {
+                echo "<script>
+                    alert('Barang keluar ditolak dan stok diperbarui.');
+                    window.location.href = 'barangkeluar_pimpinan.php';
+                </script>";
+                exit;
+            } else {
+                echo "Error updating stock: " . mysqli_error($conn);
+            }
         } else {
-            echo "Error: " . mysqli_error($conn);
+            echo "Error rejecting: " . mysqli_error($conn);
         }
 
         // Tutup prepared statement
@@ -513,17 +486,17 @@ if (isset($_POST['tolakbarangkeluar'])) {
     }
 }
 
-//Fungsi barang keluar pimpinan
+//Fungsi menghapus barang keluar pimpinan
 if (isset($_POST['hapusbarangkeluarpimpinan'])) {
     $idb = $_POST['idbarang'];
-    $qty = $_POST['qty'];
+    $qty_keluar = $_POST['qty_keluar'];
     $idk = $_POST['idkeluar'];
 
     $getdatastok = mysqli_query($conn, "SELECT * FROM stok WHERE idbarang = '$idb'");
     $data = mysqli_fetch_array($getdatastok);
     $stok = $data['stock'];
 
-    $selisih = $stok + $qty;
+    $selisih = $stok + $qty_keluar;
     $update = mysqli_query($conn, "UPDATE stok SET stock = '$selisih' WHERE idbarang = '$idb'");
     $hapusdata = mysqli_query($conn, "DELETE FROM `barang-keluar` WHERE idkeluar = '$idk'");
 
@@ -531,7 +504,7 @@ if (isset($_POST['hapusbarangkeluarpimpinan'])) {
         echo '<script>alert("Berhasil Hapus Barang Keluar");window.location="barangkeluar_pimpinan.php"</script>';
     } else {
         echo 'Gagal';
-        header('location:barangkeluar.php');
+        header('location:barangkeluar_pimpinan.php');
     }
 }
 

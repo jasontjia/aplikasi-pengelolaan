@@ -28,8 +28,6 @@ require 'cek.php';
                         <th>No</th>
                         <th>Nama Barang</th>
                         <th>Jenis Barang</th>
-                        <th>Harga Beli</th>
-                        <th>Harga Jual</th>
                         <th>Satuan</th>
                         <th>Jumlah Stok</th>
                     </tr>
@@ -38,13 +36,11 @@ require 'cek.php';
                 </tfoot>
                 <tbody>
                     <?php
-                    $ambilsemuadatastok = mysqli_query($conn, "select * from stock");
+                    $ambilsemuadatastok = mysqli_query($conn, "select * from stok");
                     $i = 1;
                     while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
                         $namabarang = $data['namabarang'];
                         $jenisbarang = $data['jenisbarang'];
-                        $harga_beli = $data['harga_beli'];
-                        $harga_jual = $data['harga_jual'];
                         $satuan = $data['satuan'];
                         $stock = $data['stock'];
                         $idb = $data['idbarang'];
@@ -53,8 +49,6 @@ require 'cek.php';
                             <td><?php echo $i++; ?></td>
                             <td><?php echo $namabarang; ?></td>
                             <td><?php echo $jenisbarang; ?></td>
-                            <td>Rp <?php echo number_format($harga_beli, 0, ',', '.'); ?></td>
-                            <td>Rp <?php echo number_format($harga_jual, 0, ',', '.'); ?></td>
                             <td><?php echo $satuan; ?></td>
                             <td><?php echo $stock; ?></td>
                         </tr>

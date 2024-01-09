@@ -13,7 +13,7 @@ require 'cek.php';
     <meta name="description" content="" />
     <meta name="author" content="" />
     <link href='img/logo-ajm.jpeg' rel='shortcut icon'>
-    <title>Stok Barang</title>
+    <title>Data Barang</title>
     <style>
         .hover-effect:hover {
             font-weight: bold;
@@ -30,6 +30,33 @@ require 'cek.php';
 
         .footer {
             background-color: #87CEFA
+        }
+
+        /* Gaya umum untuk tabel */
+        #datatablesSimple {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #datatablesSimple th,
+        #datatablesSimple td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #datatablesSimple th {
+            background-color: #87CEFA;
+        }
+
+        #datatablesSimple tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Gaya untuk hover pada baris tabel */
+        #datatablesSimple tr:hover {
+            background-color: #d4ebf9;
         }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
@@ -56,7 +83,7 @@ require 'cek.php';
             <nav class="sb-sidenav accordion navsecond" id="sidenavAccordion">
                 <div class="container text-center mt-5">
                     <img src="./img/logo-ajm.jpeg" class="rounded-circle mx-auto" style="width: 100px; height: 100px;">
-                    <p class="mt-2 text-dark fs-5" style="font-weight: bold;">Karyawan</p>
+                    <p class="mt-2 text-dark fs-5" style="font-weight: bold;">Karyawan Gudang</p>
                 </div>
                 <div class="sb-sidenav-menu">
                     <div class="nav">
@@ -84,7 +111,12 @@ require 'cek.php';
                             <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
                                 <a class="dropdown-item" href="barangmasuk.php">Barang Masuk</a>
                                 <a class="dropdown-item" href="barangkeluar.php">Barang Keluar</a>
+                                <a class="dropdown-item" href="do.php">Drop Order</a>
                             </div>
+                            <a class="nav-link text-white" href="kartustok.php">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-note-sticky fs-5 text-dark"></i></div>
+                                <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Kartu Stok</p>
+                            </a>
                             <button onclick="confirmLogout()" class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-dark fs-5" style="font-weight: bold; text-decoration: none; display: flex; align-items: center;">
                                 <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt fs-5 text-dark" style="margin-left: 8px;"></i></div>
                                 <span style="margin-left: 10px;">Keluar</span>
@@ -126,8 +158,6 @@ require 'cek.php';
                                             <th>No</th>
                                             <th>Nama Barang</th>
                                             <th>Jenis Barang</th>
-                                            <th>Harga Beli</th>
-                                            <th>Harga Jual</th>
                                             <th>Satuan</th>
                                             <th>Jumlah Stok</th>
                                             <th>Aksi</th>
@@ -142,9 +172,9 @@ require 'cek.php';
                                         while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
                                             $namabarang = $data['namabarang'];
                                             $jenisbarang = $data['jenisbarang'];
-                                            $harga_beli = $data['harga_beli'];
-                                            $harga_jual = $data['harga_jual'];
                                             $satuan = $data['satuan'];
+                                            $keterangan = $data['keterangan'];
+                                            $Tanggal_Expired = $data['Tanggal_Expired'];
                                             $stock = $data['stock'];
                                             $idb = $data['idbarang'];
                                         ?>
@@ -152,11 +182,12 @@ require 'cek.php';
                                                 <td><?php echo $i++; ?></td>
                                                 <td><?php echo $namabarang; ?></td>
                                                 <td><?php echo $jenisbarang; ?></td>
-                                                <td>Rp <?php echo number_format(floatval($harga_beli), 0, ',', '.'); ?></td>
-                                                <td>Rp <?php echo number_format(floatval($harga_jual), 0, ',', '.'); ?></td>
                                                 <td><?php echo $satuan; ?></td>
                                                 <td><?php echo $stock; ?></td>
                                                 <td>
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lihatdata<?php echo $idb; ?>">
+                                                        Lihat
+                                                    </button>
                                                     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#ubah<?php echo $idb; ?>">
                                                         Ubah
                                                     </button>
@@ -165,12 +196,45 @@ require 'cek.php';
                                                     </button>
                                                 </td>
                                             </tr>
+                                            <div class="modal fade" id="lihatdata<?php echo $idb; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-primary">
+                                                            <h4 class="modal-title text-white">Lihat Data Barang</h4>
+                                                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <form method="post">
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-sm-4">
+                                                                        Nama Barang<br>
+                                                                        Jenis Barang<br>
+                                                                        Satuan<br>
+                                                                        Jumlah Stok<br>
+                                                                        Keterangan<br>
+                                                                        Tanggal Expired<br>
+                                                                    </div>
+                                                                    <div class="col"> <strong>
+                                                                            : <?php echo $namabarang; ?> <br>
+                                                                            : <?php echo $jenisbarang; ?> <br>
+                                                                            : <?php echo $satuan; ?> <br>
+                                                                            : <?php echo $stock; ?> <br>
+                                                                            : <?php echo $keterangan; ?> <br>
+                                                                            : <?php echo $Tanggal_Expired; ?> <br>
+                                                                        </strong>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="modal fade" id="ubah<?php echo $idb; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Ubah Data Barang</h4>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        <div class="modal-header bg-warning">
+                                                            <h4 class="modal-title text-black">Ubah Data Barang</h4>
+                                                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <form method="post">
                                                             <div class="modal-body">
@@ -190,12 +254,6 @@ require 'cek.php';
                                                                     ?>
                                                                 </select>
                                                                 <br>
-                                                                <h6>Harga Beli</h6>
-                                                                <input type="text" name="harga_beli" value="<?php echo $harga_beli; ?>" class="form-control" required>
-                                                                <br>
-                                                                <h6>Harga Jual</h6>
-                                                                <input type="text" name="harga_jual" value="<?php echo $harga_jual; ?>" class="form-control" required>
-                                                                <br>
                                                                 <h6>Satuan</h6>
                                                                 <select name="satuan" value="<?php echo $satuan; ?>" class="form-control">
                                                                     <?php
@@ -209,9 +267,14 @@ require 'cek.php';
                                                                     ?>
                                                                 </select>
                                                                 <br>
+                                                                <h6>Keterangan</h6>
+                                                                <textarea name="keterangan" placeholder="Keterangan" class="form-control"><?php echo $keterangan; ?></textarea>
+                                                                <br>
+                                                                <h6>Tanggal Expired</h6>
+                                                                <input type="text" name="Tanggal_Expired" value="<?php echo $Tanggal_Expired; ?>" class="form-control">
                                                                 <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
                                                                 <br>
-                                                                <button type="submit" class="btn btn-warning" name="ubahbarang">Ubah</button>
+                                                                <button type="submit" class="btn btn-warning" name="ubahbarang" onclick="return confirm('Apakah Anda yakin akan mengubah data barang ini?')">Ubah</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -220,16 +283,17 @@ require 'cek.php';
                                             <div class="modal fade" id="hapus<?php echo $idb; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Data Barang</h4>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        <div class="modal-header bg-danger">
+                                                            <h4 class="modal-title text-white">Hapus Data Barang</h4>
+                                                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <form method="post">
                                                             <div class="modal-body">
-                                                                <p>Apakah Anda yakin ingin menghapus <?php echo $namabarang; ?> berikut?</p>
-                                                                <br>
+                                                                <p>Apakah Anda yakin ingin menghapus data barang berikut?</p>
+                                                                <p><strong><?php echo $namabarang; ?></strong></p>
                                                                 <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
                                                                 <button type="submit" class="btn btn-danger" name="hapusbarang">Hapus</button>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -248,7 +312,7 @@ require 'cek.php';
             <footer class="py-4 mt-auto text-dark fs-5 footer" style="font-weight: bold;">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-center small">
-                        <div class="text-center font-weight-bold">Hak Cipta &copy; Toko Asia Jaya Motor 2023</div>
+                        <div class="text-center font-weight-bold">Hak Cipta &copy; JC Developer</div>
                     </div>
                 </div>
             </footer>
@@ -278,10 +342,9 @@ require 'cek.php';
     <div class="modal fade" id="myModal">
         <div class="modal-dialog">
             <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Tambah Data Barang</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-success">
+                    <h4 class="modal-title text-white">Data Barang</h4>
+                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
                 </div>
 
                 <form method="post">
@@ -302,12 +365,6 @@ require 'cek.php';
                             ?>
                         </select>
                         <br>
-                        <h6>Harga Beli</h6>
-                        <input type="text" name="harga_beli" placeholder="Harga Beli" class="form-control" required>
-                        <br>
-                        <h6>Harga Jual</h6>
-                        <input type="text" name="harga_jual" placeholder="Harga Jual" class="form-control" required>
-                        <br>
                         <h6>Satuan</h6>
                         <select name="satuan" class="form-control">
                             <?php
@@ -321,7 +378,14 @@ require 'cek.php';
                             ?>
                         </select>
                         <br>
-                        <button type="submit" class="btn btn-success" name="addnewbarang">Simpan</button>
+                        <h6>Keterangan</h6>
+                        <textarea name="keterangan" placeholder="Keterangan" class="form-control"><?php echo $keterangan; ?></textarea>
+                        <br>
+                        <h6>Tanggal Expired</h6>
+                        <input type="text" name="Tanggal_Expired" placeholder="Tanggal Expired" class="form-control">
+                        <br>
+                        <input type="hidden" name="stock" value="<?php echo $stock; ?>">
+                        <button type="submit" class="btn btn-success" name="addnewbarang" onclick="return confirm('Apakah Anda yakin akan menambah data barang ini?')">Simpan</button>
                     </div>
                 </form>
             </div>

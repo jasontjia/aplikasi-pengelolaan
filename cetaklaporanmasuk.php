@@ -37,11 +37,9 @@ require 'cek.php';
                     <tr>
                         <th>Tanggal Masuk</th>
                         <th>Nama Barang</th>
-                        <th>Harga Beli</th>
                         <th>Satuan</th>
                         <th>Nama Supplier</th>
                         <th>Jumlah Barang Masuk</th>
-                        <th>Total</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -68,27 +66,16 @@ require 'cek.php';
                         $idm = $data['idmasuk'];
                         $tanggal = $data['tanggal'];
                         $namabarang = $data['namabarang'];
-                        $harga_beli = $data['harga_beli'];
                         $satuan = $data['satuan'];
                         $nama_supplier = $data['nama_supplier'];
-                        $qty = $data['qty'];
-                        $total = $data['total'];
+                        $qty_masuk = $data['qty_masuk'];
                     ?>
                         <tr>
                             <td><?php echo $tanggal; ?></td>
                             <td><?php echo $namabarang; ?></td>
-                            <td>Rp <?php echo number_format($harga_beli, 0, ',', '.'); ?></td>
                             <td><?php echo $satuan; ?></td>
                             <td><?php echo $nama_supplier; ?></td>
-                            <td><?php echo $qty; ?></td>
-                            <td>
-                                <?php
-                                if (!empty($total) && is_numeric($total)) {
-                                    echo 'Rp ' . number_format($total, 0, ',', '.');
-                                } else {
-                                }
-                                ?>
-                            </td>
+                            <td><?php echo $qty_masuk; ?></td>
                         </tr>
                     <?php
                     };

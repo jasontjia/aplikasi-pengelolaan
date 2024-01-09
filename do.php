@@ -7,13 +7,14 @@ require 'cek.php';
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href='img/logo-ajm.jpeg' rel='shortcut icon'>
-    <title>Satuan Barang</title>
+    <title>Barang Keluar</title>
     <style>
         .hover-effect:hover {
             font-weight: bold;
@@ -31,6 +32,7 @@ require 'cek.php';
         .footer {
             background-color: #87CEFA
         }
+
         /* Gaya umum untuk tabel */
         #datatablesSimple {
             font-family: Arial, sans-serif;
@@ -38,7 +40,8 @@ require 'cek.php';
             width: 100%;
         }
 
-        #datatablesSimple th, #datatablesSimple td {
+        #datatablesSimple th,
+        #datatablesSimple td {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
@@ -57,8 +60,8 @@ require 'cek.php';
             background-color: #d4ebf9;
         }
     </style>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script>
         function confirmLogout() {
@@ -80,11 +83,11 @@ require 'cek.php';
             <nav class="sb-sidenav accordion navsecond" id="sidenavAccordion">
                 <div class="container text-center mt-5">
                     <img src="./img/logo-ajm.jpeg" class="rounded-circle mx-auto" style="width: 100px; height: 100px;">
-                    <p class="mt-2 text-dark fs-5" style="font-weight: bold;">Pemilik Toko</p>
+                    <p class="mt-2 text-dark fs-5" style="font-weight: bold;">Karyawan Gudang</p>
                 </div>
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link text-white" href="beranda_pimpinan.php">
+                        <a class="nav-link text-white" href="beranda.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt fs-5 text-dark"></i></div>
                             <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Beranda</p>
                         </a>
@@ -94,10 +97,10 @@ require 'cek.php';
                                 <span class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Data Master</span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
-                                <a class="dropdown-item" href="databarang_pimpinan.php">Data Barang</a>
-                                <a class="dropdown-item" href="jenis-barang_pimpinan.php">Jenis Barang</a>
-                                <a class="dropdown-item" href="supplier_pimpinan.php">Data Supplier</a>
-                                <a class="dropdown-item" href="satuan_pimpinan.php">Satuan Barang</a>
+                                <a class="dropdown-item" href="databarang.php">Data Barang</a>
+                                <a class="dropdown-item" href="jenis-barang.php">Jenis Barang</a>
+                                <a class="dropdown-item" href="supplier.php">Data Supplier</a>
+                                <a class="dropdown-item" href="satuan.php">Satuan Barang</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -106,12 +109,12 @@ require 'cek.php';
                                 <span class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Transaksi</span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
-                                <a class="dropdown-item" href="barangmasuk_pimpinan.php">Barang Masuk</a>
-                                <a class="dropdown-item" href="barangkeluar_pimpinan.php">Barang Keluar</a>
-                                <a class="dropdown-item" href="do_pimpinan.php">Drop Order</a>
+                                <a class="dropdown-item" href="barangmasuk.php">Barang Masuk</a>
+                                <a class="dropdown-item" href="barangkeluar.php">Barang Keluar</a>
+                                <a class="dropdown-item" href="do.php">Drop Order</a>
                             </div>
                         </li>
-                        <a class="nav-link text-white" href="kartustok_pimpinan.php">
+                        <a class="nav-link text-white" href="kartustok.php">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-note-sticky fs-5 text-dark"></i></div>
                             <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Kartu Stok</p>
                         </a>
@@ -126,32 +129,80 @@ require 'cek.php';
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Satuan Barang</h1>
+                    <h1 class="mt-4">Drop Order</h1>
                     <div class="card mb-4">
                         <div class="card-header">
                         </div>
                         <div class="card-body">
-                            <table id="datatablesSimple" class="table table-bordered">
+                            <table id="datatablesSimple">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Satuan Barang</th>
+                                        <th>Nama Barang</th>
+                                        <th>Satuan</th>
+                                        <th>Jumlah Barang Keluar</th>
+                                        <th>Penerima</th>
+                                        <th>NO DO</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
                                 </tfoot>
                                 <tbody>
                                     <?php
-                                    $ambilsemuadatasatuan = mysqli_query($conn, "SELECT * FROM `satuan`");
+                                    if (isset($_POST['saringtanggal'])) {
+                                        $mulai = $_POST['tanggal_mulai'];
+                                        $selesai = $_POST['tanggal_selesai'];
+
+                                        if ($mulai != null || $selesai != null) {
+
+                                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang
+                                                    AND tanggal BETWEEN '$mulai' AND DATE_ADD('$selesai', INTERVAL 1 DAY) ORDER BY idkeluar DESC");
+                                        } else {
+                                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang");
+                                        }
+                                    } else {
+                                        $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang");
+                                    }
                                     $i = 1;
-                                    while ($data = mysqli_fetch_array($ambilsemuadatasatuan)) {
+                                    while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
+                                        $idk = $data['idkeluar'];
+                                        $idb = $data['idbarang'];
+                                        $namabarang = $data['namabarang'];
                                         $satuan = $data['satuan'];
-                                        $ids = $data['id_satuan'];
+                                        $qty_keluar = $data['qty_keluar'];
+                                        $penerima = $data['penerima'];
+                                        $no_do = $data['no_do'];
+                                        $foto_barang = $data['foto_barang'];
                                     ?>
                                         <tr>
                                             <td><?php echo $i++; ?></td>
+                                            <td><?php echo $namabarang; ?></td>
                                             <td><?php echo $satuan; ?></td>
+                                            <td><?php echo $qty_keluar; ?></td>
+                                            <td><?php echo $penerima; ?></td>
+                                            <td><?php echo $no_do; ?></td>
+                                            <td>
+                                                <?php if (!empty($foto_barang)) { ?>
+                                                    <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#lihatgambar<?php echo $idk; ?>">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                <?php } ?>
+                                            </td>
                                         </tr>
+                                        <div class="modal fade" id="lihatgambar<?php echo $idk; ?>">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-primary">
+                                                        <h4 class="modal-title text-white">Lihat Gambar</h4>
+                                                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <img src="<?php echo $foto_barang; ?>" alt="Foto Gambar" style="width:100%;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     <?php
                                     }
                                     ?>
@@ -161,7 +212,7 @@ require 'cek.php';
                     </div>
                 </div>
             </main>
-            <footer class="py-4 mt-auto text-dark fs-5 footer fixed-bottom" style="font-weight: bold;">
+            <footer class="py-4 mt-auto text-dark fs-5 footer" style="font-weight: bold;">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-center small">
                         <div class="text-center font-weight-bold">Hak Cipta &copy; JC Developer</div>
@@ -172,6 +223,7 @@ require 'cek.php';
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
+    <script src="js/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/chart-area-demo.js"></script>
     <script src="assets/demo/chart-bar-demo.js"></script>

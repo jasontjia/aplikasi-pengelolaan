@@ -31,6 +31,31 @@ require 'cek.php';
         .footer {
             background-color: #87CEFA
         }
+        /* Gaya umum untuk tabel */
+        #datatablesSimple {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #datatablesSimple th, #datatablesSimple td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #datatablesSimple th {
+            background-color: #87CEFA;
+        }
+
+        #datatablesSimple tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Gaya untuk hover pada baris tabel */
+        #datatablesSimple tr:hover {
+            background-color: #d4ebf9;
+        }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -55,7 +80,7 @@ require 'cek.php';
             <nav class="sb-sidenav accordion navsecond" id="sidenavAccordion">
                 <div class="container text-center mt-5">
                     <img src="./img/logo-ajm.jpeg" class="rounded-circle mx-auto" style="width: 100px; height: 100px;">
-                    <p class="mt-2 text-dark fs-5" style="font-weight: bold;">Karyawan</p>
+                    <p class="mt-2 text-dark fs-5" style="font-weight: bold;">Karyawan Gudang</p>
                 </div>
                 <div class="sb-sidenav-menu">
                     <div class="nav">
@@ -83,8 +108,13 @@ require 'cek.php';
                             <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
                                 <a class="dropdown-item" href="barangmasuk.php">Barang Masuk</a>
                                 <a class="dropdown-item" href="barangkeluar.php">Barang Keluar</a>
+                                <a class="dropdown-item" href="do.php">Drop Order</a>
                             </div>
                         </li>
+                        <a class="nav-link text-white" href="kartustok.php">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-note-sticky fs-5 text-dark"></i></div>
+                            <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Kartu Stok</p>
+                        </a>
                         <button onclick="confirmLogout()" class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-dark fs-5" style="font-weight: bold; text-decoration: none; display: flex; align-items: center;">
                             <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt fs-5 text-dark" style="margin-left: 8px;"></i></div>
                             <span style="margin-left: 10px;">Keluar</span>
@@ -100,7 +130,7 @@ require 'cek.php';
                     <div class="card mb-4">
                         <div class="card-header">
                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#myModal">
-                                Tambah Barang Masuk
+                                Barang Masuk
                             </button>
                             <a href="cetaklaporanmasuk.php" class="btn btn-secondary">Cetak Laporan</a>
                             <div class="row mt-4">
@@ -119,15 +149,13 @@ require 'cek.php';
                             <table id="datatablesSimple">
                                 <thead>
                                     <tr>
+                                        <th>No</th>
                                         <th>Tanggal Masuk</th>
                                         <th>Nama Barang</th>
-                                        <th>Harga Beli</th>
                                         <th>Satuan</th>
                                         <th>Nama Supplier</th>
                                         <th>Jumlah Barang Masuk</th>
-                                        <th>Total</th>
                                         <th>Status</th>
-                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
@@ -148,47 +176,23 @@ require 'cek.php';
                                     } else {
                                         $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang");
                                     }
-
+                                    $i = 1;
                                     while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
                                         $idb = $data['idbarang'];
                                         $idm = $data['idmasuk'];
                                         $tanggal = $data['tanggal'];
                                         $namabarang = $data['namabarang'];
-                                        $harga_beli = $data['harga_beli'];
                                         $satuan = $data['satuan'];
                                         $nama_supplier = $data['nama_supplier'];
-                                        $qty = $data['qty'];
-                                        $total = $data['total'];
+                                        $qty_masuk = $data['qty_masuk'];
                                         $status = $data['status'];
-
-                                        $ubahButton = '';
-                                        $hapusButton = '';
-
-                                        if ($status != 'Disetujui' && $status != 'Ditolak') {
-                                            // Menampilkan tombol Ubah dan Hapus
-                                            $ubahButton = '<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#ubah' . $idm . '">Ubah</button>';
-                                            $hapusButton = '<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#hapus' . $idm . '">Hapus</button>';
-                                        } else {
-                                            // Tidak menampilkan tombol Ubah dan Hapus
-                                            $ubahButton = '';
-                                            $hapusButton = '';
-                                        }
-                                        echo '<tr>';
                                     ?>
+                                        <td><?php echo $i++; ?></td>
                                         <td><?php echo $tanggal; ?></td>
                                         <td><?php echo $namabarang; ?></td>
-                                        <td>Rp <?php echo number_format($harga_beli, 0, ',', '.'); ?></td>
                                         <td><?php echo $satuan ?></td>
                                         <td><?php echo $nama_supplier; ?></td>
-                                        <td><?php echo $qty; ?></td>
-                                        <td>
-                                            <?php
-                                            if (!empty($total) && is_numeric($total)) {
-                                                echo 'Rp ' . number_format($total, 0, ',', '.');
-                                            } else {
-                                            }
-                                            ?>
-                                        </td>
+                                        <td><?php echo $qty_masuk; ?></td>
                                         <td>
                                             <span style="color:
                                     <?php
@@ -200,81 +204,13 @@ require 'cek.php';
                                             echo 'red';
                                         }
                                     ?>">
-                                            <?php echo $status; ?>
+                                                <?php echo $status; ?>
                                             </span>
                                         </td>
-                                        <td>
-                                            <?php echo $ubahButton; ?>
-                                            <?php echo $hapusButton; ?>
-                                        </td>
+
+                                        </tr>
                                     <?php
-                                        echo '</tr>';
-                                    };
-                                    ?>
-                                    <div class="modal fade" id="ubah<?php echo $idm; ?>">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Ubah Barang Masuk</h4>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <form method="post">
-                                                    <div class="modal-body">
-                                                        <h6>Nama Barang</h6>
-                                                        <input type="text" name="namabarang" value="<?php echo $namabarang; ?>" class="form-control" readonly>
-                                                        <br>
-                                                        <h6>Nama Supplier</h6>
-                                                        <select name="nama_supplier" class="form-control">
-                                                            <?php
-                                                            $ambilsemuadatasupplier = mysqli_query($conn, "SELECT * FROM `supplier`");
-                                                            while ($fetcharray = mysqli_fetch_array($ambilsemuadatasupplier)) {
-                                                                $id_supplier = $fetcharray['id_supplier'];
-                                                                $nama_supplier = $fetcharray['nama_supplier'];
-                                                            ?>
-                                                                <option value="<?php echo $nama_supplier; ?>"><?php echo $nama_supplier; ?></option>
-                                                            <?php
-                                                            }
-                                                            ?>
-                                                        </select>
-                                                        <br>
-                                                        <h6>Harga Beli</h6>
-                                                        <input type="text" name="harga_beli" id="harga_beli_ubah" value="<?php echo $harga_beli; ?>" class="form-control" readonly>
-                                                        <br>
-                                                        <h6>Jumlah Barang Masuk</h6>
-                                                        <input type="number" name="qty" id="qty_ubah" value="<?php echo $qty; ?>" class="form-control" required>
-                                                        <br>
-                                                        <h6>Total</h6>
-                                                        <input type="text" name="total" id="total_ubah" value="<?php echo $total; ?>" placeholder="Total" class="form-control" readonly>
-                                                        <br>
-                                                        <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
-                                                        <input type="hidden" name="idmasuk" value="<?php echo $idm; ?>">
-                                                        <button type="submit" class="btn btn-warning" name="ubahbarangmasuk">Ubah</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal fade" id="hapus<?php echo $idm; ?>">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h4 class="modal-title">Hapus Barang Masuk</h4>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <form method="post">
-                                                    <div class="modal-body">
-                                                        <p>Apakah Anda yakin ingin menghapus <?php echo $namabarang; ?> berikut?</p>
-                                                        <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
-                                                        <input type="hidden" name="idmasuk" value="<?php echo $idm; ?>">
-                                                        <input type="hidden" name="qty" value="<?php echo $qty; ?>">
-                                                        <button type="submit" class="btn btn-danger" name="hapusbarangmasuk">Hapus</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    </tr>
-                                    <?php
+                                    }
                                     ?>
                                 </tbody>
                             </table>
@@ -285,7 +221,7 @@ require 'cek.php';
             <footer class="py-4 mt-auto text-dark fs-5 footer" style="font-weight: bold;">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-center small">
-                        <div class="text-center font-weight-bold">Hak Cipta &copy; Toko Asia Jaya Motor 2023</div>
+                        <div class="text-center font-weight-bold">Hak Cipta &copy; JC Developer</div>
                     </div>
                 </div>
             </footer>
@@ -312,18 +248,35 @@ require 'cek.php';
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var qtyMasukElement = document.getElementById('qty_masuk');
+
+            function validatePositiveNumber(inputElement) {
+                var inputValue = inputElement.value;
+
+                // Memastikan nilai input tidak negatif pada saat input jumlah stok masuk
+                if (inputValue < 0) {
+                    // Jika negatif, set nilai input menjadi 0
+                    inputElement.value = 0;
+                }
+            }
+
+            qtyMasukElement.addEventListener('input', function() {
+                validatePositiveNumber(this);
+            });
+        });
+    </script>
 </body>
 <!-- The Modal -->
 <div class="modal fade" id="myModal">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Tambah Barang Masuk</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-success">
+                <h4 class="modal-title text-white">Barang Masuk</h4>
+                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
             </div>
-
             <!-- Modal body -->
             <form method="post">
                 <div class="modal-body">
@@ -334,22 +287,12 @@ require 'cek.php';
                         while ($fetcharray = mysqli_fetch_array($ambilsemuadata)) {
                             $namabarangnya = $fetcharray['namabarang'];
                             $idbarangnya = $fetcharray['idbarang'];
+                            $stock = $fetcharray['stock'];
+                            $satuan = $fetcharray['satuan'];
                         ?>
-
-                            <option value="<?= $idbarangnya; ?>"><?= $namabarangnya; ?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                    <br>
-                    <h6>Harga beli</h6>
-                    <select name="harga_beli" id="harga_beli_masuk" class="form-control">
-                        <?php
-                        $ambilsemuadata = mysqli_query($conn, "select * from stok");
-                        while ($fetcharray = mysqli_fetch_array($ambilsemuadata)) {
-                            $harga_beli = $fetcharray['harga_beli'];
-                        ?>
-                            <option value="<?= $harga_beli; ?>"><?= $harga_beli; ?></option>
+                            <option value="<?= $idbarangnya . '-' . $stock; ?>">
+                                <?= $namabarangnya . ' ('.$stock.' '.$satuan.')'; ?>
+                            </option>
                         <?php
                         }
                         ?>
@@ -387,33 +330,13 @@ require 'cek.php';
                     </td>
                     <br>
                     <h6>Jumlah Barang Masuk</h6>
-                    <input type="number" name="qty" id="qty_masuk" placeholder="Jumlah Barang Masuk" class="form-control" required>
+                    <input type="number" name="qty_masuk" id="qty_masuk" placeholder="Jumlah Barang Masuk" class="form-control" required>
                     <br>
-                    <h6>Total</h6>
-                    <input type="number" name="total" id="total_masuk" placeholder="Total" class="form-control" readonly>
-                    <br>
-                    <button type="submit" class="btn btn-success" name="barangmasuk">Simpan</button>
+                    <button type="submit" class="btn btn-success" name="barangmasuk" onclick="return confirm('Apakah Anda yakin akan menambah data barang masuk ini?')">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    $(document).ready(function() {
-        // Logika perhitungan total harga saat barang diubah atau diinput
-        $(document).on('change', "#qty_ubah, #harga_beli_ubah, #qty_masuk, #harga_beli_masuk", function() {
-            var qty_ubah = parseFloat($("#qty_ubah").val()) || 0;
-            var harga_beli_ubah = parseFloat($("#harga_beli_ubah").val()) || 0;
-            var qty_masuk = parseFloat($("#qty_masuk").val()) || 0;
-            var harga_beli_masuk = parseFloat($("#harga_beli_masuk").val()) || 0;
-
-            var total_ubah = qty_ubah * harga_beli_ubah;
-            var total_masuk = qty_masuk * harga_beli_masuk;
-
-            $("#total_ubah").val(total_ubah);
-            $("#total_masuk").val(total_masuk);
-        });
-    });
-</script>
 
 </html>

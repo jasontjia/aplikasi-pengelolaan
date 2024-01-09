@@ -67,6 +67,13 @@ if (isset($_SESSION['iduser']) && $_SESSION['log'] == 'True') {
     </style>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script>
+        function confirmlogin() {
+            var result = confirm("Apakah Anda yakin ingin masuk ke aplikasi?");
+            if (result) {
+            } else {}
+        }
+    </script>
 </head>
 
 <body class="loginform">
@@ -95,7 +102,7 @@ if (isset($_SESSION['iduser']) && $_SESSION['log'] == 'True') {
                                             echo '<div class="text-danger">' . $error_message . '</div>';
                                         } ?>
                                         <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <button class="btn btn-primary hover" name="masuk">Masuk</button>
+                                            <button onclick="confirmlogin()" class="btn btn-primary hover" name="masuk">Masuk</button>
                                         </div>
                                     </form>
                                 </div>

@@ -13,7 +13,7 @@ require 'cek.php';
     <meta name="description" content="" />
     <meta name="author" content="" />
     <link href='img/logo-ajm.jpeg' rel='shortcut icon'>
-    <title>Barang Masuk</title>
+    <title>Kartu Stok</title>
     <style>
         .hover-effect:hover {
             font-weight: bold;
@@ -126,10 +126,10 @@ require 'cek.php';
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Barang Masuk</h1>
+                    <h1 class="mt-4">Kartu Stok</h1>
                     <div class="card mb-4">
                         <div class="card-header">
-                            <a href="cetaklaporanmasuk.php" class="btn btn-secondary">Cetak Laporan</a>
+                            <a href="cetakkartustok.php" class="btn btn-secondary">Cetak Kartu</a>
                             <div class="row mt-4">
                                 <div class="col">
                                     <form method="post" class="form-inline">
@@ -152,8 +152,6 @@ require 'cek.php';
                                         <th>Satuan</th>
                                         <th>Nama Supplier</th>
                                         <th>Jumlah Barang Masuk</th>
-                                        <th>Status</th>
-                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
@@ -169,7 +167,7 @@ require 'cek.php';
                                             $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang
                                                     AND tanggal BETWEEN '$mulai' AND DATE_ADD('$selesai', INTERVAL 1 DAY) ORDER BY idmasuk DESC");
                                         } else {
-                                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang");
+                                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM barang-masuk m, stok s WHERE s.idbarang = m.idbarang");
                                         }
                                     } else {
                                         $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang");
@@ -183,83 +181,70 @@ require 'cek.php';
                                         $satuan = $data['satuan'];
                                         $nama_supplier = $data['nama_supplier'];
                                         $qty_masuk = $data['qty_masuk'];
-                                        $status = $data['status'];
                                     ?>
-                                        <tr>
-                                            <td><?php echo $i++; ?></td>
-                                            <td><?php echo $tanggal; ?></td>
-                                            <td><?php echo $namabarang; ?></td>
-                                            <td><?php echo $satuan; ?></td>
-                                            <td><?php echo $nama_supplier; ?></td>
-                                            <td><?php echo $qty_masuk; ?></td>
-                                            <td>
-                                                <span style="color:
-                                                        <?php
-                                                        if ($status == 'Menunggu') {
-                                                            echo 'blue';
-                                                        } elseif ($status == 'Disetujui') {
-                                                            echo 'green';
-                                                        } elseif ($status == 'Ditolak') {
-                                                            echo 'red';
-                                                        }
-                                                        ?>">
-                                                    <?php echo $status; ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                if ($status == 'Menunggu') {
-                                                    echo '<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#validasi' . $idm . '">Validasi</button>';
-                                                    echo '&nbsp;';
-                                                    echo '<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#hapus' . $idm . '">Hapus</button>';
-                                                }
-                                                ?>
-                                            </td>
-                                        </tr>
-                                        <!-- Modal Persetujuan -->
-                                        <div class="modal fade" id="validasi<?php echo $idm; ?>">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-success">
-                                                        <h4 class="modal-title text-white">Persetujuan Barang Masuk</h4>
-                                                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <form method="post">
-                                                        <div class="modal-body">
-                                                            <h6>Konfirmasi persetujuan untuk barang masuk <?php echo $namabarang; ?></h6>
-                                                            <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
-                                                            <input type="hidden" name="idmasuk" value="<?php echo $idm; ?>">
-                                                            <input type="hidden" name="qty_masuk" value="<?php echo $qty_masuk; ?>">
-                                                            <button type="submit" class="btn btn-success" name="approvebarangmasuk" onclick="return confirm('Apakah Anda yakin akan menyetujui data barang masuk ini?')">Setujui</button>
-                                                            <button type="submit" class="btn btn-danger" name="tolakbarangmasuk" onclick="return confirm('Apakah Anda yakin akan menolak data barang masuk ini?')">Tolak</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal fade" id="hapus<?php echo $idm; ?>">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-danger">
-                                                        <h4 class="modal-title text-white">Hapus Barang Masuk</h4>
-                                                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <form method="post">
-                                                        <div class="modal-body">
-                                                            <p><strong>Apakah Anda yakin ingin menghapus <?php echo $namabarang; ?> berikut?</strong></p>
-                                                            <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
-                                                            <input type="hidden" name="idmasuk" value="<?php echo $idm; ?>">
-                                                            <input type="hidden" name="qty_masuk" value="<?php echo $qty_masuk; ?>">
-                                                            <button type="submit" class="btn btn-danger" name="hapusbarangmasukpimpinan">Hapus</button>
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <td><?php echo $i++; ?></td>
+                                        <td><?php echo $tanggal; ?></td>
+                                        <td><?php echo $namabarang; ?></td>
+                                        <td><?php echo $satuan ?></td>
+                                        <td><?php echo $nama_supplier; ?></td>
+                                        <td><?php echo $qty_masuk; ?></td>
+
                                         </tr>
                                     <?php
-                                    };
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-body">
+                            <table id="datatablesSimple">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Tanggal Keluar</th>
+                                        <th>Nama Barang</th>
+                                        <th>Satuan</th>
+                                        <th>Jumlah Barang Keluar</th>
+                                        <th>Penerima</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                </tfoot>
+                                <tbody>
+                                    <?php
+                                    if (isset($_POST['saringtanggal'])) {
+                                        $mulai = $_POST['tanggal_mulai'];
+                                        $selesai = $_POST['tanggal_selesai'];
+
+                                        if ($mulai != null || $selesai != null) {
+
+                                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang
+                                                    AND tanggal BETWEEN '$mulai' AND DATE_ADD('$selesai', INTERVAL 1 DAY) ORDER BY idkeluar DESC");
+                                        } else {
+                                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang");
+                                        }
+                                    } else {
+                                        $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang");
+                                    }
+                                    $i = 1;
+                                    while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
+                                        $idk = $data['idkeluar'];
+                                        $idb = $data['idbarang'];
+                                        $tanggal = $data['tanggal'];
+                                        $namabarang = $data['namabarang'];
+                                        $satuan = $data['satuan'];
+                                        $qty_keluar = $data['qty_keluar'];
+                                        $penerima = $data['penerima'];
+                                    ?>
+                                        <td><?php echo $i++; ?></td>
+                                        <td><?php echo $tanggal; ?></td>
+                                        <td><?php echo $namabarang; ?></td>
+                                        <td><?php echo $satuan; ?></td>
+                                        <td><?php echo $qty_keluar; ?></td>
+                                        <td><?php echo $penerima; ?></td>
+                                        </tr>
+                                    <?php
+                                    }
                                     ?>
                                 </tbody>
                             </table>
@@ -278,6 +263,7 @@ require 'cek.php';
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
+    <script src="js/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/chart-area-demo.js"></script>
     <script src="assets/demo/chart-bar-demo.js"></script>
@@ -296,6 +282,36 @@ require 'cek.php';
             });
         });
     </script>
-</body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = new simpleDatatables.DataTable('#datatablesSimple', {
+                labels: {
+                    // Sesuaikan dengan bahasa yang diinginkan
+                    placeholder: 'Cari...',
+                    perPage: ' entri per halaman',
+                    noRows: 'Tidak ada data untuk ditampilkan',
+                    info: 'Menampilkan {start} sampai {end} dari {rows} entri',
+                },
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var qtyMasukElement = document.getElementById('qty_masuk');
 
-</html>
+            function validatePositiveNumber(inputElement) {
+                var inputValue = inputElement.value;
+
+                // Memastikan nilai input tidak negatif pada saat input jumlah stok masuk
+                if (inputValue < 0) {
+                    // Jika negatif, set nilai input menjadi 0
+                    inputElement.value = 0;
+                }
+            }
+
+            qtyMasukElement.addEventListener('input', function() {
+                validatePositiveNumber(this);
+            });
+        });
+    </script>
+</body>

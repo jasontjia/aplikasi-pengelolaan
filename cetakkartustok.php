@@ -5,7 +5,7 @@ require 'cek.php';
 <html>
 
 <head>
-    <title>Laporan Barang Keluar</title>
+    <title>Laporan Barang Masuk</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -19,8 +19,8 @@ require 'cek.php';
 
 <body>
     <div class="container align-content-center">
-        <h2 class="text-center">Laporan Stok Barang Keluar Toko Asia Jaya Motor</h2>
-        <h4 class="text-center">Barang Keluar</h4>
+        <h2 class="text-center">Kartu Stok Barang Toko Asia Jaya Motor</h2>
+        <h4 class="text-center">Kartu Stok</h4>
         <div class="data-tables datatable-dark">
             <div class="row mt-4">
                 <div class="col">
@@ -32,6 +32,56 @@ require 'cek.php';
                     </form>
                 </div>
             </div>
+            <table id="tabelmasuk" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Tanggal Masuk</th>
+                        <th>Nama Barang</th>
+                        <th>Satuan</th>
+                        <th>Nama Supplier</th>
+                        <th>Jumlah Barang Masuk</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                </tfoot>
+                <tbody>
+                    <?php
+                    if (isset($_POST['saringtanggal'])) {
+                        $mulai = $_POST['tanggal_mulai'];
+                        $selesai = $_POST['tanggal_selesai'];
+
+                        if ($mulai != null || $selesai != null) {
+
+                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang
+                                                    AND tanggal BETWEEN '$mulai' AND DATE_ADD('$selesai', INTERVAL 1 DAY) ORDER BY idmasuk DESC");
+                        } else {
+                            $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang");
+                        }
+                    } else {
+                        $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-masuk` m, stok s WHERE s.idbarang = m.idbarang");
+                    }
+
+                    while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
+                        $idb = $data['idbarang'];
+                        $idm = $data['idmasuk'];
+                        $tanggal = $data['tanggal'];
+                        $namabarang = $data['namabarang'];
+                        $satuan = $data['satuan'];
+                        $nama_supplier = $data['nama_supplier'];
+                        $qty_masuk = $data['qty_masuk'];
+                    ?>
+                        <tr>
+                            <td><?php echo $tanggal; ?></td>
+                            <td><?php echo $namabarang; ?></td>
+                            <td><?php echo $satuan; ?></td>
+                            <td><?php echo $nama_supplier; ?></td>
+                            <td><?php echo $qty_masuk; ?></td>
+                        </tr>
+                    <?php
+                    };
+                    ?>
+                </tbody>
+            </table>
             <table id="tabelkeluar" class="display" style="width:100%">
                 <thead>
                     <tr>
@@ -85,6 +135,17 @@ require 'cek.php';
         </div>
     </div>
 
+    <script>
+        $(document).ready(function() {
+            $('#tabelmasuk').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'pdf', 'print'
+                ]
+            });
+        });
+    </script>
+    <br>
     <script>
         $(document).ready(function() {
             $('#tabelkeluar').DataTable({

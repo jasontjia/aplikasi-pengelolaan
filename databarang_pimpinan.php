@@ -31,6 +31,31 @@ require 'cek.php';
         .footer {
             background-color: #87CEFA
         }
+        /* Gaya umum untuk tabel */
+        #datatablesSimple {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #datatablesSimple th, #datatablesSimple td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #datatablesSimple th {
+            background-color: #87CEFA;
+        }
+
+        #datatablesSimple tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Gaya untuk hover pada baris tabel */
+        #datatablesSimple tr:hover {
+            background-color: #d4ebf9;
+        }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -83,8 +108,13 @@ require 'cek.php';
                             <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
                                 <a class="dropdown-item" href="barangmasuk_pimpinan.php">Barang Masuk</a>
                                 <a class="dropdown-item" href="barangkeluar_pimpinan.php">Barang Keluar</a>
+                                <a class="dropdown-item" href="do_pimpinan.php">Drop Order</a>
                             </div>
                         </li>
+                        <a class="nav-link text-white" href="kartustok_pimpinan.php">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-note-sticky fs-5 text-dark"></i></div>
+                            <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Kartu Stok</p>
+                        </a>
                         <button onclick="confirmLogout()" class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-dark fs-5" style="font-weight: bold; text-decoration: none; display: flex; align-items: center;">
                             <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt fs-5 text-dark" style="margin-left: 8px;"></i></div>
                             <span style="margin-left: 10px;">Keluar</span>
@@ -122,10 +152,9 @@ require 'cek.php';
                                             <th>No</th>
                                             <th>Nama Barang</th>
                                             <th>Jenis Barang</th>
-                                            <th>Harga Beli</th>
-                                            <th>Harga Jual</th>
                                             <th>Satuan</th>
                                             <th>Jumlah Stok</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -137,9 +166,9 @@ require 'cek.php';
                                         while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
                                             $namabarang = $data['namabarang'];
                                             $jenisbarang = $data['jenisbarang'];
-                                            $harga_beli = $data['harga_beli'];
-                                            $harga_jual = $data['harga_jual'];
                                             $satuan = $data['satuan'];
+                                            $keterangan = $data['keterangan'];
+                                            $Tanggal_Expired = $data['Tanggal_Expired'];
                                             $stock = $data['stock'];
                                             $idb = $data['idbarang'];
                                         ?>
@@ -147,11 +176,46 @@ require 'cek.php';
                                                 <td><?php echo $i++; ?></td>
                                                 <td><?php echo $namabarang; ?></td>
                                                 <td><?php echo $jenisbarang; ?></td>
-                                                <td>Rp <?php echo number_format(floatval($harga_beli), 0, ',', '.'); ?></td>
-                                                <td>Rp <?php echo number_format(floatval($harga_jual), 0, ',', '.'); ?></td>
                                                 <td><?php echo $satuan; ?></td>
                                                 <td><?php echo $stock; ?></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lihatdata<?php echo $idb; ?>">
+                                                        Lihat
+                                                </td>
                                             </tr>
+                                            <div class="modal fade" id="lihatdata<?php echo $idb; ?>">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Lihat Data Barang</h4>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <form method="post">
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <div class="col-sm-4">
+                                                                        Nama Barang<br>
+                                                                        Jenis Barang<br>
+                                                                        Satuan<br>
+                                                                        Jumlah Stok<br>
+                                                                        Keterangan<br>
+                                                                        Tanggal Expired<br>
+                                                                    </div>
+                                                                    <div class="col"> <strong>
+                                                                        : <?php echo $namabarang; ?> <br>
+                                                                        : <?php echo $jenisbarang; ?> <br>
+                                                                        : <?php echo $satuan; ?> <br>
+                                                                        : <?php echo $stock; ?> <br>
+                                                                        : <?php echo $keterangan; ?> <br>
+                                                                        : <?php echo $Tanggal_Expired; ?> <br>
+                                                                        </strong>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php
                                         }
                                         ?>
@@ -165,7 +229,7 @@ require 'cek.php';
             <footer class="py-4 mt-auto text-dark fs-5 footer" style="font-weight: bold;">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-center small">
-                        <div class="text-center font-weight-bold">Hak Cipta &copy; Toko Asia Jaya Motor 2023</div>
+                        <div class="text-center font-weight-bold">Hak Cipta &copy; JC Developer</div>
                     </div>
                 </div>
             </footer>

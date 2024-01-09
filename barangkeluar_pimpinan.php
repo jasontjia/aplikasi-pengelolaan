@@ -44,6 +44,31 @@ require 'cek.php';
         .footer {
             background-color: #87CEFA
         }
+        /* Gaya umum untuk tabel */
+        #datatablesSimple {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #datatablesSimple th, #datatablesSimple td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        #datatablesSimple th {
+            background-color: #87CEFA;
+        }
+
+        #datatablesSimple tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Gaya untuk hover pada baris tabel */
+        #datatablesSimple tr:hover {
+            background-color: #d4ebf9;
+        }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
@@ -96,8 +121,13 @@ require 'cek.php';
                                 <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
                                     <a class="dropdown-item" href="barangmasuk_pimpinan.php">Barang Masuk</a>
                                     <a class="dropdown-item" href="barangkeluar_pimpinan.php">Barang Keluar</a>
+                                    <a class="dropdown-item" href="do_pimpinan.php">Drop Order</a>
                                 </div>
                             </li>
+                            <a class="nav-link text-white" href="kartustok_pimpinan.php">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-note-sticky fs-5 text-dark"></i></div>
+                                <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Kartu Stok</p>
+                            </a>
                             <button onclick="confirmLogout()" class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-dark fs-5" style="font-weight: bold; text-decoration: none; display: flex; align-items: center;">
                                 <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt fs-5 text-dark" style="margin-left: 8px;"></i></div>
                                 <span style="margin-left: 10px;">Keluar</span>
@@ -129,13 +159,12 @@ require 'cek.php';
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
+                                            <th>No</th>
                                             <th>Tanggal Keluar</th>
                                             <th>Nama Barang</th>
-                                            <th>Harga Jual</th>
                                             <th>Satuan</th>
                                             <th>Jumlah Barang Keluar</th>
                                             <th>Penerima</th>
-                                            <th>Total</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -158,33 +187,24 @@ require 'cek.php';
                                         } else {
                                             $ambilsemuadatastok = mysqli_query($conn, "SELECT * FROM `barang-keluar` k, stok s WHERE s.idbarang = k.idbarang");
                                         }
+                                        $i = 1;
                                         while ($data = mysqli_fetch_array($ambilsemuadatastok)) {
                                             $idk = $data['idkeluar'];
                                             $idb = $data['idbarang'];
                                             $tanggal = $data['tanggal'];
                                             $namabarang = $data['namabarang'];
-                                            $harga_jual = $data['harga_jual'];
                                             $satuan = $data['satuan'];
-                                            $qty = $data['qty'];
+                                            $qty_keluar = $data['qty_keluar'];
                                             $penerima = $data['penerima'];
-                                            $total = $data['total'];
                                             $status = $data['status'];
                                         ?>
                                             <tr>
+                                                <td><?php echo $i++; ?></td>
                                                 <td><?php echo $tanggal; ?></td>
                                                 <td><?php echo $namabarang; ?></td>
-                                                <td>Rp <?php echo number_format($harga_jual, 0, ',', '.'); ?></td>
                                                 <td><?php echo $satuan; ?></td>
-                                                <td><?php echo $qty; ?></td>
+                                                <td><?php echo $qty_keluar; ?></td>
                                                 <td><?php echo $penerima; ?></td>
-                                                <td>
-                                                    <?php
-                                                    if (!empty($total) && is_numeric($total)) {
-                                                        echo 'Rp ' . number_format($total, 0, ',', '.');
-                                                    } else {
-                                                    }
-                                                    ?>
-                                                </td>
                                                 <td>
                                                     <span style="color:
                                                     <?php
@@ -211,16 +231,18 @@ require 'cek.php';
                                             <div class="modal fade" id="validasi<?php echo $idk; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Persetujuan Barang Keluar</h4>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        <div class="modal-header bg-success">
+                                                            <h4 class="modal-title text-white">Persetujuan Barang Keluar</h4>
+                                                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <form method="post">
                                                             <div class="modal-body">
-                                                                <h6>Konfirmasi persetujuan untuk barang masuk <?php echo $namabarang; ?></h6>
+                                                                <h6>Konfirmasi persetujuan untuk barang keluar <?php echo $namabarang; ?></h6>
+                                                                <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
                                                                 <input type="hidden" name="idkeluar" value="<?php echo $idk; ?>">
-                                                                <button type="submit" class="btn btn-success" name="approvebarangkeluar">Setujui</button>
-                                                                <button type="submit" class="btn btn-danger" name="tolakbarangkeluar">Tolak</button>
+                                                                <input type="hidden" name="qty_keluar" value="<?php echo $qty_keluar; ?>">
+                                                                <button type="submit" class="btn btn-success" name="approvebarangkeluar" onclick="return confirm('Apakah Anda yakin akan menambah data barang keluar ini?')">Setujui</button>
+                                                                <button type="submit" class="btn btn-danger" name="tolakbarangkeluar" onclick="return confirm('Apakah Anda yakin akan menambah data keluar masuk ini?')">Tolak</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -229,17 +251,18 @@ require 'cek.php';
                                             <div class="modal fade" id="hapus<?php echo $idk; ?>">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">Hapus Barang Masuk</h4>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        <div class="modal-header bg-danger">
+                                                            <h4 class="modal-title text-white">Hapus Barang Masuk</h4>
+                                                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <form method="post">
                                                             <div class="modal-body">
-                                                                <p>Apakah Anda yakin ingin menghapus <?php echo $namabarang; ?> berikut?</p>
+                                                                <p><strong> Anda yakin ingin menghapus <?php echo $namabarang; ?> berikut?</strong></p>
                                                                 <input type="hidden" name="idbarang" value="<?php echo $idb; ?>">
                                                                 <input type="hidden" name="idkeluar" value="<?php echo $idk; ?>">
-                                                                <input type="hidden" name="qty" value="<?php echo $qty; ?>">
+                                                                <input type="hidden" name="qty_keluar" value="<?php echo $qty_keluar; ?>">
                                                                 <button type="submit" class="btn btn-danger" name="hapusbarangkeluarpimpinan">Hapus</button>
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -257,7 +280,7 @@ require 'cek.php';
                 <footer class="py-4 mt-auto text-dark fs-5 footer" style="font-weight: bold;">
                     <div class="container-fluid px-4">
                         <div class="d-flex align-items-center justify-content-center small">
-                            <div class="text-center font-weight-bold">Hak Cipta &copy; Toko Asia Jaya Motor 2023</div>
+                            <div class="text-center font-weight-bold">Hak Cipta &copy; JC Developer</div>
                         </div>
                     </div>
                 </footer>

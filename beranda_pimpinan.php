@@ -105,8 +105,13 @@ require 'cek.php';
                             <div class="dropdown-menu" aria-labelledby="stokBarangDropdown">
                                 <a class="dropdown-item" href="barangmasuk_pimpinan.php">Barang Masuk</a>
                                 <a class="dropdown-item" href="barangkeluar_pimpinan.php">Barang Keluar</a>
+                                <a class="dropdown-item" href="do_pimpinan.php">Drop Order</a>
                             </div>
                         </li>
+                        <a class="nav-link text-white" href="kartustok_pimpinan.php">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-note-sticky fs-5 text-dark"></i></div>
+                            <p class="mb-0 fs-5 hover-effect text-dark" style="font-weight: bold;">Kartu Stok</p>
+                        </a>
                         <button onclick="confirmLogout()" class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 text-dark fs-5" style="font-weight: bold; text-decoration: none; display: flex; align-items: center;">
                             <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt fs-5 text-dark" style="margin-left: 8px;"></i></div>
                             <span style="margin-left: 10px;">Keluar</span>
@@ -231,7 +236,7 @@ require 'cek.php';
             <footer class="py-4 mt-auto text-dark fs-5 footer" style="font-weight: bold;">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-center small">
-                        <div class="text-center font-weight-bold">Hak Cipta &copy; Toko Asia Jaya Motor 2023</div>
+                        <div class="text-center font-weight-bold">Hak Cipta &copy; JC Developer</div>
                     </div>
                 </div>
             </footer>
